@@ -1,29 +1,9 @@
-/*
-Node.js
-- Sıfırdan node.js projesini oluştur
-- Express server kurulumunu tamamla
-- Route groups (app.use) kullanımını araştır
-
-- Basit bir http server oluşturup run’la
-- api/v1/auth route group’u oluşturup bu grubun altına -> Sign in, sign up, reset password, update password endpoint’lerini oluştur
-
-SIGN IN: Kullanıcıdan email ve şifre alarak eğer email ve şifre database’deki (şimdilik hardcoded string olabilir) karşılaştırıp doğru ise JWT (JWT Token ve OAuth akışını araştır) success dönecek
-SIGN UP: Kullanıcıdan email ve şifre ve şifre tekrar alarak backend’de bunların kontrolünü yaparak eğer tüm bilgiler doğru ise ilgili http response’unu dönecek
-RESET PASSWORD: Kullanıcıdan mail alarak 
-UPDATE PASSWORD: JWT kullanarak kullanıcı verilerini alıp ilgili kullanıcınının şifresini güncelleyip buna göre ilgili mesaj dönecek
-
-Not-1: Tüm endpointlerde gerektiğinde middleware ile input validation ve endpointlerin business logic kısmında error handling yapılmalı
-Not-2: Content type her zaman JSON olacak
-
-Genel
-- HTTP Method farklarını ve kullanımlarını araştır
-*/
-
 //Initializations
 const express = require("express")
 const cookieParser = require("cookie-parser")
 const path = require("path")
 const jwt = require("jsonwebtoken")
+const fs = require("fs")
 const randomstring = require("randomstring")
 
 require("dotenv").config()
@@ -33,7 +13,8 @@ server.use(cookieParser());
 server.use(express.urlencoded({extended:false}))
 server.use(express.json())
 
-var userList = [{email: "temp@temp.com", password: "1234"}, {email:"say@hello.com", password:"1111"}]
+var userList = fs.readFileSync("./user_list.json")
+userList = JSON.parse(userList)
 
 //Functions
 
@@ -47,6 +28,10 @@ function authenticateJWT(req, res, next) {
 		req.user = user
 		next()
 	})
+}
+
+function updateJSON(userList){
+	fs.writeFileSync("./user_list.json", JSON.stringify(userList), err =>{if(err) throw err;})
 }
 
 function checkUser(req, res, next) {
@@ -72,6 +57,7 @@ const main_page = `<h2><a href="/api/v1/auth/sign-in">sign-in</a></h2>
 //Server Methods
 server.get("/", (req,res)=>{
 	res.redirect("/api/v1/auth")
+	console.log(userList)
 })
 
 server.get("/api/v1/auth", checkUser, (req, res)=>{
@@ -122,7 +108,8 @@ server.post("/api/v1/auth/sign-up", (req, res)=>{
 	
 	if(!x){
 		if(password === confirm){
-			userList.push({email: email, password:password})
+			userList.push(user)
+			updateJSON(userList)
 			const accMade = jwt.sign({email: email, newAcc: true}, process.env.ACCESS_TOKEN_SECRET)
 			res.cookie("newAcc", accMade)
 			res.redirect("/api/v1/auth/sign-up?confirm=true")
@@ -147,6 +134,7 @@ server.post("/api/v1/auth/reset-password", (req, res)=>{
 	if(index !== -1){
 		const tempPass = randomstring.generate(16)
 		userList[index].password = tempPass
+		updateJSON(userList)
 		res.send(`<h2>Your password has been temporarily changed to `+ tempPass +`</h2>
 			<h3><a href="/api/v1/auth/sign-in">Go back to sign-in page</a></h3>`)
 	}
@@ -178,6 +166,7 @@ server.get("/api/v1/auth/update-password", checkUser, (req, res)=>{
 server.post("/api/v1/auth/update-password", checkUser, (req, res)=>{
 	if (req.body.password === req.body.confirm){
 		userList[userList.findIndex(x=>x.email === req.user.email)].password = req.body.password
+		updateJSON(userList)
 		res.clearCookie("authorization")
 		res.send(`<h2>Your password has been changed! Make sure you sign-in to your account again!</h2>
 			<h3><a href="/api/v1/auth/sign-in"> Go to sign-in page</a></h3>
