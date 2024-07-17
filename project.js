@@ -31,7 +31,7 @@ function authenticateJWT(req, res, next) {
 }
 
 function updateJSON(userList){
-	fs.writeFileSync("./user_list.json", JSON.stringify(userList), err =>{if(err) throw err;})
+	fs.writeFileSync("./user_list.json", JSON.stringify(userList, null, "\t"), err =>{if(err) throw err;})
 }
 
 function checkUser(req, res, next) {
@@ -57,7 +57,6 @@ const main_page = `<h2><a href="/api/v1/auth/sign-in">sign-in</a></h2>
 //Server Methods
 server.get("/", (req,res)=>{
 	res.redirect("/api/v1/auth")
-	console.log(userList)
 })
 
 server.get("/api/v1/auth", checkUser, (req, res)=>{
