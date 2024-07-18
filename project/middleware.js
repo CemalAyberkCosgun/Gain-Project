@@ -6,7 +6,7 @@ function updateJSON(userList){
 }
 
 function checkUser(req, res, next) {
-	const {authorization} = req.body
+	const authorization = req.get("Authorization")
 	if(authorization){
 		jwt.verify(authorization, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
 		if (!err){
