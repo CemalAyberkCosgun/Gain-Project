@@ -9,11 +9,11 @@
   },
   "name": "the-project",
   "version": "1.0.0",
-  "main": "project.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node project.js",
-    "devstart": "nodemon project.js"
+    "start": "node server.js",
+    "devstart": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
