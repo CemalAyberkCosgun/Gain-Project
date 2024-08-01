@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "alert": "^6.0.1",
+    "argon2": "^0.40.3",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
