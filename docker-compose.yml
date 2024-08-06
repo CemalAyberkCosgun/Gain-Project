@@ -1,0 +1,22 @@
+services:
+  api:
+    build:
+      dockerfile: ./docker/API.dockerfile
+    ports:
+      - 1234:1234
+    depends_on:
+      - db
+    networks:
+      - bridge
+  db:
+    build:
+      dockerfile: ./docker/DB.dockerfile
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    networks:
+      - bridge
+
+networks:
+  bridge:
+    name: test
+    external: true
