@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
-dotenv.config(".../.env")
+import path from "path"
+import { fileURLToPath } from "url"
+dotenv.config({path: path.join(path.dirname(fileURLToPath(import.meta.url)), "../env/secret.env")})
 
 function checkUser(req, res, next) {
 	const authorization = req.get("Authorization")

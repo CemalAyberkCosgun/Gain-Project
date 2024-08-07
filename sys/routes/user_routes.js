@@ -2,7 +2,9 @@ import jwt from "jsonwebtoken"
 import randomstring from "randomstring"
 import dotenv from "dotenv"
 import mysql from "mysql2"
-dotenv.config(".../.env")
+import path from "path"
+import { fileURLToPath } from "url"
+dotenv.config({path: path.join(path.dirname(fileURLToPath(import.meta.url)), "../env/db.env")})
 
 const db = mysql.createPool({
 	host:process.env.MYSQL_HOST,

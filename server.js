@@ -3,7 +3,9 @@ import express from "express"
 import dotenv from "dotenv"
 import user_middleware from "./sys/middlewares/user_middleware.js"
 import user_route from "./sys/routes/user_routes.js"
-dotenv.config()
+import path from "path"
+import { fileURLToPath } from "url"
+dotenv.config({path: path.join(path.dirname(fileURLToPath(import.meta.url)), "../env/secret.env")})
 
 const server = express()
 server.use(express.urlencoded({extended:false}))

@@ -1,6 +1,8 @@
 import mysql from "mysql2"
 import dotenv from "dotenv"
-dotenv.config(".../.env")
+import path from "path"
+import { fileURLToPath } from "url"
+dotenv.config({path: path.join(path.dirname(fileURLToPath(import.meta.url)), "../env/db.env")})
 
 const db = mysql.createPool({
 	host:process.env.MYSQL_HOST,
