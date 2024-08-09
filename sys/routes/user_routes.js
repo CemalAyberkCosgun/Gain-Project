@@ -1,26 +1,15 @@
 import jwt from "jsonwebtoken"
 import randomstring from "randomstring"
 import dotenv from "dotenv"
-import mysql from "mysql2"
 import path from "path"
 import { fileURLToPath } from "url"
-dotenv.config({path: path.join(path.dirname(fileURLToPath(import.meta.url)), "../env/db.env")})
-
-const db = mysql.createPool({
-	host:process.env.MYSQL_HOST,
-	port:process.env.MYSQL_PORT,
-	user:process.env.MYSQL_USER,
-	password:process.env.MYSQL_PASSWORD,
-	database:process.env.MYSQL_DATABASE
-}).promise()
-dotenv.config()
+dotenv.config({path: path.join(path.dirname(fileURLToPath(import.meta.url)), "../env/secret.env")})
 
 import user_model from "../models/user_model.js"
 import encrypt_model from "../models/encrypt_model.js"
 
 
-
-function authGetMethod(req,res){
+function getAuthMethod(req,res){
 	if(req.user){
 		var a = {"email":req.user.email};
 		return res.status(200).json(req.user.email);
@@ -31,7 +20,7 @@ function authGetMethod(req,res){
 	}
 }
 
-async function signinPostMethod(req,res){
+async function postSignInMethod(req,res){
 	const {email, password} = req.body
 	const user = {email, password}
 	try{var x = await user_model.getUser(user.email)}
@@ -48,11 +37,11 @@ async function signinPostMethod(req,res){
 		}
 	}
 	else{
-		res.status(403).end()
+		res.status(400).end()
 	}
 }
 
-async function signupPostMethod(req, res){
+async function postSignUpMethod(req, res){
 	const {email, password, confirm, name, surname} = req.body
 	var user = {email, password, name, surname}
 	try{
@@ -78,7 +67,7 @@ async function signupPostMethod(req, res){
 	}
 }
 
-async function resetPasswordPostMethod(req, res){
+async function postResetPasswordMethod(req, res){
 	try{const index = await user_model.getUser(req.body.email)}
 	catch(err){const index = []}
 	if(index.length){
@@ -92,7 +81,7 @@ async function resetPasswordPostMethod(req, res){
 	}
 }
 
-async function updatePasswordPostMethod(req, res){
+async function postUpdatePasswordMethod(req, res){
 	console.log(req.user, "\n", req.body.password, "\n", req.body.confirm)
 	console.log(Boolean(req.user && (req.body.password == req.body.confirm)))
 	if (req.user && req.body.password == req.body.confirm){
@@ -112,6 +101,6 @@ async function updatePasswordPostMethod(req, res){
 	}
 }
 
-const user_routes = {authGetMethod, signinPostMethod, signupPostMethod, resetPasswordPostMethod, updatePasswordPostMethod}
+const user_routes = {getAuthMethod, postSignInMethod, postSignUpMethod, postResetPasswordMethod, postUpdatePasswordMethod}
 
 export default user_routes
