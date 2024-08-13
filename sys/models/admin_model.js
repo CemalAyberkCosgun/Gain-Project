@@ -52,7 +52,7 @@ async function createEpisode(name, description, video_url, title_name, season_no
 
 async function getTitle(name){
 	try {
-		var title = await admin_db.query(`SELECT id FROM titles WHERE name = "${name}"`);
+		var title = await admin_db.query(`SELECT id FROM titles WHERE name = "${name}";`);
 		return title[0][0].id
 	}
 	catch(err){
@@ -62,7 +62,7 @@ async function getTitle(name){
 
 async function getSeason(season_no, title_id){
 	try {
-		var season = await admin_db.query(`SELECT id FROM seasons WHERE season_num = "${season_no} AND title_id = ${title_id}`);
+		var season = await admin_db.query(`SELECT id FROM seasons WHERE season_num = ${season_no} AND title_id = ${title_id};`);
 		return season[0][0].id
 	}
 	catch(err){
@@ -74,7 +74,7 @@ async function getEpisode(name, title_name, season_no){
 	try {
 		var title_id = await getTitle(title_name)
 		var season_id = await getSeason(season_no)
-		var episode = await admin_db.query(`SELECT id FROM titles WHERE name = "${name}" AND title_id = ${title_name} AND season_id = ${season_id}`);
+		var episode = await admin_db.query(`SELECT id FROM titles WHERE name = "${name}" AND title_id = ${title_name} AND season_id = ${season_id};`);
 		return episode[0][0]
 	}
 	catch(err){
