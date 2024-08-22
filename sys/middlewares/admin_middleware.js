@@ -17,19 +17,19 @@ function checkAdmin(req, res, next) {
 					next()
 				}
 				else{
-					req.status(403).end()
+					res.status(403).end()
 				}
 			}
 			catch(err){
-				req.status(403).end()
+				res.status(403).end()
 			}
 		}
 		else {
-			req.status(403).end()
+			res.status(403).end()
 			throw err
 		}
 	})}
-	else{req.status(400).end()}
+	else{res.status(400).end()}
 }
 
 const admin_middleware = {checkAdmin}

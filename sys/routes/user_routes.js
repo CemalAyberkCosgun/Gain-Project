@@ -50,17 +50,12 @@ async function postSignUpMethod(req, res){
 	catch(err){var x = []}
 	
 	if(!x.length){
-		if(password === confirm){
-			try{
-				await user_model.createUser(user.email, user.name, user.surname, await encrypt_model.createHash(user.password))
-				user = await user_model.getUser(user.email)
-				res.status(200).json(user[0])
-			}
-			catch(err){res.status(403).end()}
+		try{
+			await user_model.createUser(user.email, user.name, user.surname, await encrypt_model.createHash(user.password))
+			user = await user_model.getUser(user.email)
+			res.status(200).json(user[0])
 		}
-		else{
-			res.status(403).end()
-		}
+		catch(err){res.status(403).end()}
 	}
 	else{
 		res.status(403).end()
@@ -82,8 +77,6 @@ async function postResetPasswordMethod(req, res){
 }
 
 async function postUpdatePasswordMethod(req, res){
-	console.log(req.user, "\n", req.body.password, "\n", req.body.confirm)
-	console.log(Boolean(req.user && (req.body.password == req.body.confirm)))
 	if (req.user && req.body.password == req.body.confirm){
 		try{
 			await user_model.updateUser(req.user.email, await encrypt_model.createHash(req.body.password))

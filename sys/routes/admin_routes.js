@@ -46,7 +46,7 @@ async function postSeasonMethod(req, res) {
 		res.status(200).end()
 	}
 	catch(err){
-		res.status(403).json(err)
+		res.status(403).end()
 	}
 }
 
@@ -57,10 +57,48 @@ async function postEpisodeMethod(req, res){
 		res.status(200).end()
 	}
 	catch(err){
+		console.log(err)
 		res.status(403).json(err)
 	}
 }
 
-const admin_routes = {postSignInAdminMethod, postTitleMethod, postSeasonMethod, postEpisodeMethod}
+async function getTitleMethod(req, res) {
+	const {title_name} = req.body
+	try{
+		var title = await admin_model.getTitle(title_name)
+		res.status(200).json(title)
+	}
+	catch(err){
+		res.status(403).json(err)
+	}
+}
+
+async function getSeasonMethod(req, res) {
+	const {season_no, title_name} = req.body
+	try{
+		var title_id = (await admin_model.getTitle(title_name)).ID
+		var season = await admin_model.getSeason(season_no, title_id)
+		res.status(200).json(season)
+	}
+	catch(err){
+		res.status(403).json(err)
+	}
+}
+
+async function getEpisodeMethod(req, res) {
+	const {episode_name, season_no, title_name} = req.body
+	try{
+		var title_id = (await admin_model.getTitle(title_name)).ID
+		var season_id = (await admin_model.getSeason(season_no, title_id)).ID
+		var episode = await admin_model.getEpisode(episode_name, season_id, title_id)
+		res.status(200).json(episode)
+	}
+	catch(err){
+		console.log(err)
+		res.status(403).json(err)
+	}
+}
+
+const admin_routes = {postSignInAdminMethod, postTitleMethod, postSeasonMethod, postEpisodeMethod, getTitleMethod, getSeasonMethod, getEpisodeMethod}
 
 export default admin_routes
